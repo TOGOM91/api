@@ -1,0 +1,75 @@
+extends layout
+
+block content
+  .edit-container
+    .edit-header
+      h1 Modifier mon profil
+      p.subtitle Mettez à jour vos informations
+    
+    form.edit-form(action=`/users/edit/${user._id}` method="POST" enctype="multipart/form-data" onsubmit="return validateForm()")
+      input(type="hidden" name="_method" value="PUT")
+      
+      .form-row
+        .form-group
+          label(for="name") Nom complet
+          input#name(type="text" name="name" value=user.name required minlength="2")
+        
+        .form-group
+          label(for="username") Nom d'utilisateur
+          input#username(type="text" name="username" value=user.username required minlength="3")
+      
+      .form-group
+        label(for="email") Adresse email
+        input#email(type="email" name="email" value=user.email required)
+      
+      .form-group
+        label(for="password") Nouveau mot de passe
+        input#password(type="password" name="password" placeholder="Laisser vide pour conserver l'actuel" minlength="6")
+        small.helper-text Minimum 6 caractères si vous souhaitez le changer
+      
+      if user.role
+        .form-group
+          label(for="role") Rôle
+          select#role(name="role")
+            option(value="user" selected=user.role === 'user') Utilisateur
+            option(value="admin" selected=user.role === 'admin') Administrateur
+      
+      .form-group.file-input-group
+        label Photo de profil
+        if user.profilPic
+          .current-profile
+            img.current-profile-img(src=user.profilPic alt="Photo actuelle")
+            p.helper-text Photo actuelle
+        
+        .file-preview#editFilePreview(style="display: none;")
+          img#editPreviewImage(src="#" alt="Aperçu")
+        
+        input#profilPic(type="file" name="profilPic" accept="image/*" onchange="previewEditImage(this)")
+      
+      .form-actions
+        a.btn-outline(href="/me") Annuler
+        button.btn-submit(type="submit") Enregistrer les modifications
+
+  script.
+    function validateForm() {
+      const password = document.getElementById('password').value;
+      if (password && password.length < 6) {
+        alert('Le mot de passe doit contenir au moins 6 caractères');
+        return false;
+      }
+      return true;
+    }
+    
+    function previewEditImage(input) {
+      const preview = document.getElementById('editFilePreview');
+      const previewImg = document.getElementById('editPreviewImage');
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          preview.style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }

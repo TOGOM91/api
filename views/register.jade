@@ -1,0 +1,57 @@
+extends layout
+
+block content
+  .auth-card
+    .auth-header
+      h1 Créer un compte
+      p.subtitle Rejoignez-nous dès aujourd'hui
+
+    form.auth-form(action="/users" method="POST" enctype="multipart/form-data")
+      .form-group
+        label(for="name") Nom complet
+        input#name(type="text" name="name" placeholder="Jean Dupont" required)
+      
+      .form-group
+        label(for="username") Nom d'utilisateur
+        input#username(type="text" name="username" placeholder="jeandupont" required minlength="3")
+      
+      .form-group
+        label(for="email") Adresse email
+        input#email(type="email" name="email" placeholder="jean@example.com" required)
+      
+      .form-group
+        label(for="password") Mot de passe
+        input#password(type="password" name="password" placeholder="••••••••" required minlength="6")
+        small.helper-text Minimum 6 caractères
+      
+      .form-group
+        label(for="role") Rôle
+        select#role(name="role")
+          option(value="user") Utilisateur
+          option(value="admin") Administrateur
+      
+      .form-group.file-input-group
+        label(for="profilPic") Photo de profil (optionnelle)
+        .file-preview#filePreview
+          .preview-placeholder
+            span.icon 📷
+            span Aucune image sélectionnée
+        input#profilPic(type="file" name="profilPic" accept="image/*" onchange="previewProfilePic(this)")
+      
+      button.btn-submit(type="submit") Créer mon compte
+    
+    .auth-footer
+      p Vous avez déjà un compte ? 
+        a.link(href="/login") Connectez-vous
+
+  script.
+    function previewProfilePic(input) {
+      const preview = document.getElementById('filePreview');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="preview-image">`;
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }

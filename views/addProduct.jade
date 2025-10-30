@@ -1,0 +1,65 @@
+extends layout
+
+block content
+  .add-product-container
+    .page-header
+      h1 Ajouter un produit
+      p.subtitle Partagez vos produits avec la communauté
+
+    form.product-form(action="/products/add" method="POST")
+      .form-group
+        label(for="name") Nom du produit
+        input#name(type="text" name="name" placeholder="Ex: iPhone 15 Pro" required)
+      
+      .form-row
+        .form-group
+          label(for="price") Prix (€)
+          input#price(type="number" name="price" step="0.01" placeholder="999.99" required)
+        
+        .form-group
+          label(for="image") URL de l'image
+          input#image(type="url" name="image" placeholder="https://example.com/image.jpg")
+      
+      .form-group
+        label(for="description") Description
+        textarea#description(name="description" rows="4" placeholder="Décrivez votre produit...")
+      
+      button.btn-submit(type="submit")
+        span.icon ➕
+        | Ajouter le produit
+
+  .products-section
+    .section-header
+      h2.section-title Produits existants
+      span.products-count= products ? products.length : 0
+    
+    if products && products.length
+      .products-grid
+        each p in products
+          .product-card
+            if p.image
+              .product-image
+                img(src=p.image alt=p.name)
+            else
+              .product-image.product-placeholder
+                span.icon 📦
+            
+            .product-content
+              h3.product-name= p.name
+              p.product-price #{p.price} €
+              if p.description
+                p.product-description= p.description
+            
+            .product-actions
+              form.inline-form(action=`/wishlist/${p._id}` method="POST")
+                button.btn-icon.btn-like(type="submit" title="Ajouter aux favoris")
+                  span ❤️
+              
+              form.inline-form(action=`/products/${p._id}?_method=DELETE` method="POST" onsubmit="return confirm('Supprimer ce produit ?')")
+                button.btn-icon.btn-delete(type="submit" title="Supprimer")
+                  span 🗑️
+    else
+      .empty-state
+        span.icon 📦
+        p Aucun produit pour le moment
+        a.btn-primary(href="/addProduct") Ajouter le premier produit

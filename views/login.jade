@@ -1,0 +1,75 @@
+extends layout
+
+block content
+  .auth-card
+    .auth-header
+      h1 Bon retour !
+      p.subtitle Connectez-vous à votre compte
+
+    form.auth-form(action="/users/login" method="POST")
+      .form-group
+        label(for="email") Adresse email
+        input#email(type="email" name="email" placeholder="jean@example.com" required)
+      
+      .form-group
+        label(for="password") Mot de passe
+        input#password(type="password" name="password" placeholder="••••••••" required)
+      
+      button.btn-submit(type="submit") Se connecter
+    
+    .auth-footer
+      p Pas encore de compte ? 
+        a.link(href="/register") Inscrivez-vous
+
+//- ========================================
+//- ME.JADE - Page profil utilisateur
+//- ========================================
+extends layout
+
+block content
+  .profile-container
+    .profile-header
+      .profile-avatar-large
+        if user.profilPic
+          img(src=user.profilPic alt="Photo de profil")
+        else
+          .avatar-placeholder-large #{user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+      
+      .profile-info
+        h1.profile-name= user.name
+        p.profile-email= user.email
+        span.profile-badge(class=user.role === 'admin' ? 'badge-admin' : 'badge-user')= user.role
+    
+    .profile-actions
+      a.btn-primary(href=`/users/edit/${user._id}`)
+        span.icon ✏️
+        | Modifier le profil
+      a.btn-outline(href="/addProduct")
+        span.icon ➕
+        | Ajouter un produit
+      form.delete-form(action=`/users/${user._id}?_method=DELETE` method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ?')")
+        button.btn-danger(type="submit")
+          span.icon 🗑️
+          | Supprimer le compte
+  
+  .users-section
+    h2.section-title Tous les utilisateurs
+    
+    if users && users.length
+      .users-grid
+        each u in users
+          .user-card
+            .user-card-avatar
+              if u.profilPic
+                img(src=u.profilPic alt=u.name)
+              else
+                .avatar-placeholder #{u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+            .user-card-info
+              h3.user-card-name= u.name
+              p.user-card-username @#{u.username}
+              p.user-card-email= u.email
+              span.user-card-badge(class=u.role === 'admin' ? 'badge-admin' : 'badge-user')= u.role
+    else
+      .empty-state
+        span.icon 👥
+        p Aucun utilisateur trouvé

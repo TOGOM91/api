@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  .wishlist-container
+    h1.wishlist-title Ma Wishlist
+
+    if wishlistItems && wishlistItems.length > 0
+      .wishlist-grid
+        each item in wishlistItems
+          .wishlist-item
+            .item-image
+              if item.image
+                img(src=item.image alt=item.name)
+              else
+                .placeholder-image
+                  span.icon 📦
+
+            .item-details
+              h3.item-name= item.name
+              p.item-price #{item.price} €
+
+              if item.description
+                p.item-description= item.description
+
+              // Formulaire pour retirer un produit de la wishlist
+              form.inline-form(
+                action=`/wishlist/${item._id}?_method=DELETE`
+                method="POST"
+                onsubmit="return confirm('Retirer ce produit de votre wishlist ?')"
+              )
+                button.btn-remove(type="submit") Retirer
+
+    else
+      .wishlist-empty
+        p Aucun article dans votre wishlist
+        a.btn-primary(href="/addProduct") Parcourir les produits

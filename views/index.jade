@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  h1 Users List
+  
+  each msg in success_msg
+      p(style="color: green") #{msg}
+  each msg in error_msg
+      p(style="color: red") #{msg}
+ 
+  if user
+    h2 Welcome, #{user.name}!
+    p Email: #{user.email}
+    p Username: #{user.username}
+    p Role: #{user.role}
+    form(action="/users/#{user._id}?_method=DELETE", method="POST")
+      button(type="submit") delete Account
+    a(href="/addProduct") ajouter produit
+  else
+    p You are not logged in. Please 
+    a(href="/login") login
+    
+
+
+  if users && users.length
+      each u in users
+         h3=u.name
+         p Email: #{u.email}
+         p Username: #{u.username}
+         p Role: #{u.role}
+        hr
+  else
+    p No users found.
+
+
+

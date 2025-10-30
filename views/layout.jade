@@ -1,0 +1,64 @@
+doctype html
+html(lang="fr")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title= title || "Mon Application"
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet")
+  body
+    //- Navigation moderne
+    nav.navbar
+      .navbar-container
+        a.navbar-brand(href="/") 
+          span.brand-icon 🚀
+          | MyApp
+        
+        .navbar-menu
+          if user
+            .user-info
+              if user.profilPic
+                img.avatar-small(src=user.profilPic alt="Avatar")
+              else
+                .avatar-small.avatar-placeholder #{user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              span.user-name= user.name || user.email
+            
+            .navbar-actions
+              a.nav-link(href="/me") 
+                span.icon 👤
+                | Profil
+              a.nav-link(href="/addProduct")
+                span.icon ➕
+                | Ajouter
+              a.nav-link(href=`/users/edit/${user._id}`)
+                span.icon ⚙️
+                | Paramètres
+              a.nav-link(href="/wishlist")
+                span.icon ❤️
+                | Wishlist
+              form.logout-form(action="/users/logout" method="POST")
+                button.btn-logout(type="submit")
+                  span.icon 🚪
+                  | Déconnexion
+          else
+            .navbar-actions
+              a.btn-outline(href="/login") Connexion
+              a.btn-primary(href="/register") Inscription
+
+    //- Messages flash modernes
+    .flash-container
+      each msg in success_msg
+        .flash-success= msg
+      each msg in error_msg
+        .flash-error= msg
+
+    //- Contenu principal
+    main.main-content
+      .container
+        block content
+
+    //- Footer
+    footer
+      p © 2025 MyApp - Créé avec ❤️
